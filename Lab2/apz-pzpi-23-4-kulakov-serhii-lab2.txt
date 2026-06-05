@@ -133,283 +133,288 @@
 Приклади програмного коду та запити до ШІ
 
 В.1 MainScreen.kt
-1: package com.example.myapplication.ui.main
-2: 
-3: import android.util.Log
-4: import androidx.compose.foundation.layout.Box
-5: import androidx.compose.foundation.layout.Column
-6: import androidx.compose.foundation.layout.Spacer
-7: import androidx.compose.foundation.layout.fillMaxSize
-8: import androidx.compose.foundation.layout.padding
-9: import androidx.compose.foundation.lazy.LazyColumn
-10: import androidx.compose.foundation.lazy.items
-11: import androidx.compose.material3.CircularProgressIndicator
-12: import androidx.compose.material3.Scaffold
-13: import androidx.compose.material3.Text
-14: import androidx.compose.runtime.Composable
-15: import androidx.compose.runtime.LaunchedEffect
-16: import androidx.compose.runtime.collectAsState
-17: import androidx.compose.runtime.getValue
-18: import androidx.compose.runtime.remember
-19: import androidx.compose.ui.Alignment
-20: import androidx.compose.ui.Modifier
-21: import androidx.compose.ui.platform.LocalContext
-22: import androidx.compose.ui.unit.dp
-23: import androidx.lifecycle.ViewModel
-24: import androidx.lifecycle.ViewModelProvider
-25: import androidx.lifecycle.viewmodel.compose.viewModel
-26: import com.example.myapplication.data.network.RetrofitClient
-27: import com.example.myapplication.ui.auth.AuthViewModel
-28: import com.example.myapplication.ui.auth.AuthViewModel.CurrentScreen
-29: import com.example.myapplication.ui.auth.AuthState
-30: import com.example.myapplication.ui.auth.LoginScreen
-31: import com.example.myapplication.ui.auth.RegisterScreen
-32: import com.example.myapplication.ui.components.AdvertCard
-33: import com.example.myapplication.ui.components.MainHeader
-34: // Імпортуємо твої нові компоненти для створення оголошення
-35: import com.example.myapplication.ui.advert.CreateAdvertScreen
-36: import com.example.myapplication.ui.advert.CreateAdvertViewModel
-37: 
-38: @Composable
-39: fun MainScreen(
-40:     modifier: Modifier = Modifier,
-41:     mainViewModel: MainViewModel = viewModel(),
-42:     profileViewModel: ProfileViewModel = viewModel()
-43: ) {
-44:     val context = LocalContext.current
-45:     val searchViewModel: SearchViewModel = viewModel()
-46:     val detailViewModel: AdvertDetailViewModel = viewModel()
-47:     val createAdvertViewModel: CreateAdvertViewModel = viewModel()
-48:     val authViewModelFactory = remember(context) {
-49:         object : ViewModelProvider.Factory {
-50:             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-51:                 val repository = com.example.myapplication.data.repository.AuthRepository(
-52:                     apiService = RetrofitClient.authApiService,
-53:                     context = context
-54:                 )
-55:                 return AuthViewModel(repository) as T
-56:             }
-57:         }
-58:     }
-59: 
-60:     val authViewModel: AuthViewModel = viewModel(factory = authViewModelFactory)
-61: 
-62:     val adverts by mainViewModel.adverts.collectAsState()
-63:     val isLoading by mainViewModel.isLoading.collectAsState()
-64:     val currentScreen = authViewModel.currentScreen
-65:     val isAuthorized = authViewModel.token != null
-66:     LaunchedEffect(authViewModel.token) {
-67:         if (authViewModel.token != null) {
-68:             mainViewModel.loadFavorites(authViewModel.token)
-69:         }
-70:     }
-71: 
-72:     Scaffold(
-73:         topBar = {
-74:             MainHeader(
-75:                 onMenuClick = { target ->
-76:                     when (target) {
-77:                         "home" -> authViewModel.navigateTo(CurrentScreen.HOME)
-78:                         "search" -> authViewModel.navigateTo(CurrentScreen.SEARCH)
-79:                         "favorites", "profile" -> {
-80:                             if (authViewModel.token != null) {
-81:                                 val destination = if (target == "profile") CurrentScreen.PROFILE else CurrentScreen.FAVORITES
-82: 
-83:                                 if (destination == CurrentScreen.FAVORITES) {
-84:                                     mainViewModel.loadFavorites(authViewModel.token, onUnauthorized = { authViewModel.handleUnauthorized() })
-85:                                 }
-86:                                 if (destination == CurrentScreen.PROFILE) {
-87:                                     profileViewModel.loadProfile(authViewModel.token, onUnauthorized = { authViewModel.handleUnauthorized() })
-88:                                 }
-89: 
-90:                                 authViewModel.navigateTo(destination)
-91:                             } else {
-92:                                 authViewModel.navigateTo(CurrentScreen.LOGIN)
-93:                             }
-94:                         }
-95:                     }
-96:                 },
-97:                 onCreateAdvertClick = {
-98:                     if (authViewModel.token != null) {
-99:                         Log.d("MainScreen", "Відкриваємо створення оголошення")
-100:                         authViewModel.navigateTo(CurrentScreen.CREATE_ADVERT)
-101:                     } else {
-102:                         authViewModel.navigateTo(CurrentScreen.LOGIN)
-103:                     }
-104:                 }
-105:             )
-106:         },
-107:         modifier = modifier.fillMaxSize()
-108:     ) { innerPadding ->
-109: 
-110:         Box(
-111:             modifier = Modifier
-112:                 .fillMaxSize()
-113:                 .padding(innerPadding)
-114:         ) {
-115:             when (currentScreen) {
-116:                 CurrentScreen.HOME -> {
-117:                     LaunchedEffect(Unit) {
-118:                         mainViewModel.loadAdverts()
-119:                     }
-120: 
-121:                     if (isLoading) {
-122:                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-123:                     } else if (adverts.isEmpty()) {
-124:                         Text(text = "Оголошень не знайдено", modifier = Modifier.align(Alignment.Center))
-125:                     } else {
-126:                         LazyColumn(
-127:                             modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp)
-128:                         ) {
-129:                             items(adverts) { advert ->
-130:                                 AdvertCard(
-131:                                     advert = advert,
-132:                                     onCardClick = { id ->
-133:                                         authViewModel.selectedAdvertId = id
-134:                                         authViewModel.navigateTo(CurrentScreen.ADVERT_DETAIL)
-135:                                     },
-136:                                     onLikeClick = { id ->
-137:                                         mainViewModel.toggleFavorite(id, authViewModel.token)
-138:                                     }
-139:                                 )
-140:                             }
-141:                         }
-142:                     }
-143:                 }
-144: 
-145:                 CurrentScreen.LOGIN -> LoginScreen(
-146:                     viewModel = authViewModel,
-147:                     onNavigateToRegister = { authViewModel.navigateTo(CurrentScreen.REGISTER) },
-148:                     onLoginSuccess = {
-149:                         profileViewModel.loadProfile(authViewModel.token)
-150:                         mainViewModel.loadFavorites(authViewModel.token)
-151:                         authViewModel.navigateTo(CurrentScreen.CREATE_ADVERT)
-152:                     }
-153:                 )
-154: 
-155:                 CurrentScreen.REGISTER -> RegisterScreen(
-156:                     viewModel = authViewModel,
-157:                     onNavigateToLogin = { authViewModel.navigateTo(CurrentScreen.LOGIN) },
-158:                     onRegisterSuccess = { authViewModel.navigateTo(CurrentScreen.PROFILE) }
-159:                 )
-160: 
-161:                 CurrentScreen.SEARCH -> {
-162:                     SearchScreen(
-163:                         viewModel = searchViewModel,
-164:                         onCardClick = { id ->
-165:                             authViewModel.selectedAdvertId = id
-166:                             authViewModel.navigateTo(CurrentScreen.ADVERT_DETAIL)
-167:                         },
-168:                         onLikeClick = { id ->
-169:                             mainViewModel.toggleFavorite(id, authViewModel.token)
-170:                         }
-171:                     )
-172:                 }
-173: 
-174:                 CurrentScreen.FAVORITES -> {
-175:                     if (authViewModel.token == null) {
-176:                         LaunchedEffect(Unit) { authViewModel.navigateTo(CurrentScreen.LOGIN) }
-177:                     } else {
-178:                         LaunchedEffect(Unit) {
-179:                             mainViewModel.loadFavorites(authViewModel.token)
-180:                         }
-181: 
-182:                         val favoritesList by mainViewModel.favorites.collectAsState()
-183: 
-184:                         FavoritesScreen(
-185:                             mainViewModel = mainViewModel,
-186:                             token = authViewModel.token,
-187:                             onCardClick = { id ->
-188:                                 authViewModel.selectedAdvertId = id
-189:                                 authViewModel.navigateTo(CurrentScreen.ADVERT_DETAIL)
-190:                             }
-191:                         )
-192:                     }
-193:                 }
-194: 
-195:                 CurrentScreen.PROFILE -> {
-196:                     if (authViewModel.token == null) {
-197:                         LaunchedEffect(Unit) { authViewModel.navigateTo(CurrentScreen.LOGIN) }
-198:                     } else {
-199:                         ProfileScreen(
-200:                             profileViewModel = profileViewModel,
-201:                             authViewModel = authViewModel
-202:                         )
-203:                     }
-204:                 }
-205: 
-206:                 CurrentScreen.ADVERT_DETAIL -> {
-207:                     val advertDetail by detailViewModel.advert.collectAsState()
-208:                     val isDetailLoading by detailViewModel.isLoading.collectAsState()
+1 package com.example.myapplication.ui.main
+2 
+3 import android.util.Log
+4 import androidx.compose.foundation.layout.Box
+5 import androidx.compose.foundation.layout.Column
+6 import androidx.compose.foundation.layout.Spacer
+7 import androidx.compose.foundation.layout.fillMaxSize
+8 import androidx.compose.foundation.layout.padding
+9 import androidx.compose.foundation.lazy.LazyColumn
+10 import androidx.compose.foundation.lazy.items
+11 import androidx.compose.material3.CircularProgressIndicator
+12 import androidx.compose.material3.Scaffold
+13 import androidx.compose.material3.Text
+14 import androidx.compose.runtime.Composable
+15 import androidx.compose.runtime.LaunchedEffect
+16 import androidx.compose.runtime.collectAsState
+17 import androidx.compose.runtime.getValue
+18 import androidx.compose.runtime.remember
+19 import androidx.compose.ui.Alignment
+20 import androidx.compose.ui.Modifier
+21 import androidx.compose.ui.platform.LocalContext
+22 import androidx.compose.ui.unit.dp
+23 import androidx.lifecycle.ViewModel
+24 import androidx.lifecycle.ViewModelProvider
+25 import androidx.lifecycle.viewmodel.compose.viewModel
+26 import com.example.myapplication.data.network.RetrofitClient
+27 import com.example.myapplication.ui.auth.AuthViewModel
+28 import com.example.myapplication.ui.auth.AuthViewModel.CurrentScreen
+29 import com.example.myapplication.ui.auth.AuthState
+30 import com.example.myapplication.ui.auth.LoginScreen
+31 import com.example.myapplication.ui.auth.RegisterScreen
+32 import com.example.myapplication.ui.components.AdvertCard
+33 import com.example.myapplication.ui.components.MainHeader
+34 
+35 import com.example.myapplication.ui.advert.CreateAdvertScreen
+36 import com.example.myapplication.ui.advert.CreateAdvertViewModel
+37
+38 @Composable
+39 fun MainScreen(
+40     modifier: Modifier = Modifier,
+41     mainViewModel: MainViewModel = viewModel(),
+42     profileViewModel: ProfileViewModel = viewModel()
+43 ) {
+44     val context = LocalContext.current
+45     val searchViewModel: SearchViewModel = viewModel()
+46     val detailViewModel: AdvertDetailViewModel = viewModel()
+47     val createAdvertViewModel: CreateAdvertViewModel = viewModel()
+48     val authViewModelFactory = remember(context) {
+49        object : ViewModelProvider.Factory {
+50             override fun <T : ViewModel> create(modelClass: Class<T>): T {
+51                 val repository = com.example.myapplication.data.repository.AuthRepository(
+52                     apiService = RetrofitClient.authApiService,
+53                     context = context
+54                 )
+55                 return AuthViewModel(repository) as T
+56             }
+57         }
+58     }
+59 
+60     val authViewModel: AuthViewModel = viewModel(factory = authViewModelFactory)
+61 
+62     val adverts by mainViewModel.adverts.collectAsState()
+63     val isLoading by mainViewModel.isLoading.collectAsState()
+64     val currentScreen = authViewModel.currentScreen
+65    val isAuthorized = authViewModel.token != null
+66    LaunchedEffect(authViewModel.token) {
+67         if (authViewModel.token != null) {
+68             mainViewModel.loadFavorites(authViewModel.token)
+69         }
+70     }
+71 
+72     Scaffold(
+73         topBar = {
+74             MainHeader(
+75                 onMenuClick = { target ->
+76                     when (target) {
+77                         "home" -> authViewModel.navigateTo(CurrentScreen.HOME)
+78                         "search" -> authViewModel.navigateTo(CurrentScreen.SEARCH)
+79                         "favorites", "profile" -> {
+80                             if (authViewModel.token != null) {
+81                                val destination = if (target == "profile") CurrentScreen.PROFILE else CurrentScreen.FAVORITES
+82 
+83                                 if (destination == CurrentScreen.FAVORITES) {
+84                                     mainViewModel.loadFavorites(authViewModel.token, onUnauthorized = { authViewModel.handleUnauthorized() })
+85                                 }
+86                                 if (destination == CurrentScreen.PROFILE) {
+87                                     profileViewModel.loadProfile(authViewModel.token, onUnauthorized = { authViewModel.handleUnauthorized() })
+88                                 }
+89 
+90                                 authViewModel.navigateTo(destination)
+91                             } else {
+92                                 authViewModel.navigateTo(CurrentScreen.LOGIN)
+93                             }
+94                         }
+95                    }
+96                },
+97                 onCreateAdvertClick = {
+98                     if (authViewModel.token != null) {
+99                         Log.d("MainScreen", "Відкриваємо створення оголошення")
+100                         authViewModel.navigateTo(CurrentScreen.CREATE_ADVERT)
+101                     } else {
+102                         authViewModel.navigateTo(CurrentScreen.LOGIN)
+103                     }
+104                }
+105             )
+106         },
+107         modifier = modifier.fillMaxSize()
+108     ) { innerPadding ->
+109 
+110         Box(
+111             modifier = Modifier
+112                 .fillMaxSize()
+113                 .padding(innerPadding)
+114         ) {
+115             when (currentScreen) {
+116                 CurrentScreen.HOME -> {
+117                     LaunchedEffect(Unit) {
+118                         mainViewModel.loadAdverts()
+119                     }
+120 
+121                     if (isLoading) {
+122                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+123                     } else if (adverts.isEmpty()) {
+124                         Text(text = "Оголошень не знайдено", modifier = Modifier.align(Alignment.Center))
+125                     } else {
+126                         LazyColumn(
+127                             modifier = Modifier.fillMaxSize().padding(horizontal = 8.dp)
+128                         ) {
+129                             items(adverts) { advert ->
+130                                 AdvertCard(
+131                                     advert = advert,
+132                                     onCardClick = { id ->
+133                                         authViewModel.selectedAdvertId = id
+134                                         authViewModel.navigateTo(CurrentScreen.ADVERT_DETAIL)
+135                                     },
+136                                     onLikeClick = { id ->
+137                                         mainViewModel.toggleFavorite(id, authViewModel.token)
+138                                     }
+139                                 )
+140                             }
+141                         }
+142                     }
+143                 }
+144 
+145                 CurrentScreen.LOGIN -> LoginScreen(
+146                     viewModel = authViewModel,
+147                     onNavigateToRegister = { authViewModel.navigateTo(CurrentScreen.REGISTER) },
+148                     onLoginSuccess = {
+149                         profileViewModel.loadProfile(authViewModel.token)
+150                         mainViewModel.loadFavorites(authViewModel.token)
+151                         authViewModel.navigateTo(CurrentScreen.CREATE_ADVERT)
+152                     }
+153                 )
+154 
+155                 CurrentScreen.REGISTER -> RegisterScreen(
+156                     viewModel = authViewModel,
+157                     onNavigateToLogin = { authViewModel.navigateTo(CurrentScreen.LOGIN) },
+158                     onRegisterSuccess = { authViewModel.navigateTo(CurrentScreen.PROFILE) }
+159                 )
+160 
+161                 CurrentScreen.SEARCH -> {
+162                     SearchScreen(
+163                         viewModel = searchViewModel,
+164                         onCardClick = { id ->
+165                             authViewModel.selectedAdvertId = id
+166                             authViewModel.navigateTo(CurrentScreen.ADVERT_DETAIL)
+167                         },
+168                         onLikeClick = { id ->
+169                             mainViewModel.toggleFavorite(id, authViewModel.token)
+170                         }
+171                     )
+172                 }
+173 
+174                 CurrentScreen.FAVORITES -> {
+175                     if (authViewModel.token == null) {
+176:                        LaunchedEffect(Unit) { authViewModel.navigateTo(CurrentScreen.LOGIN) }
+177                     } else {
+178                         LaunchedEffect(Unit) {
+179                             mainViewModel.loadFavorites(authViewModel.token)
+180                         }
+181 
+182                         val favoritesList by mainViewModel.favorites.collectAsState()
+183 
+184                         FavoritesScreen(
+185                             mainViewModel = mainViewModel,
+186                             token = authViewModel.token,
+187                            onCardClick = { id ->
+188                                authViewModel.selectedAdvertId = id
+189                                 authViewModel.navigateTo(CurrentScreen.ADVERT_DETAIL)
+190                             }
+191                         )
+192                     }
+193                 }
+194 
+195                 CurrentScreen.PROFILE -> {
+196                     if (authViewModel.token == null) {
+197                         LaunchedEffect(Unit) { authViewModel.navigateTo(CurrentScreen.LOGIN) }
+198                     } else {
+199                         ProfileScreen(
+200                             profileViewModel = profileViewModel,
+201                             authViewModel = authViewModel
+202                         )
+203                     }
+204                 }
+205 
+206:                CurrentScreen.ADVERT_DETAIL -> {
+207                     val advertDetail by detailViewModel.advert.collectAsState()
+208                     val isDetailLoading by detilViewModel.isLoading.collectAsState()
 209:                     val errorMsg by detailViewModel.errorMessage.collectAsState()
-210: 
-211:                     LaunchedEffect(authViewModel.selectedAdvertId) {
-212:                         authViewModel.selectedAdvertId?.let { id ->
-213:                             detailViewModel.loadAdvert(id)
-214:                         }
-215:                     }
-216: 
-217:                     if (isDetailLoading) {
-218:                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-219:                     } else if (errorMsg != null) {
-220:                         Text(text = errorMsg ?: "Невідома помилка", modifier = Modifier.align(Alignment.Center))
-221:                     } else {
-222:                         advertDetail?.let { advert ->
-223:                             AdvertDetailScreen(advert = advert)
-224:                         } ?: Text(text = "Дані оголошення порожні", modifier = Modifier.align(Alignment.Center))
-225:                     }
-226:                 }
-227:                 CurrentScreen.CREATE_ADVERT -> {
-228:                     if (authViewModel.token == null) {
-229:                         LaunchedEffect(Unit) { authViewModel.navigateTo(CurrentScreen.LOGIN) }
-230:                     } else {
-231:                         CreateAdvertScreen(
-232:                             viewModel = createAdvertViewModel,
-233:                             token = authViewModel.token,
+210 
+211                     LaunchedEffect(authViewModel.selectedAdvertId) {
+212                         authViewModel.selectedAdvertId?.let { id ->
+213                            detailViewModel.loadAdvert(id)
+214                         }
+215                     }
+216
+217                     if (isDetailLoading) {
+218                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+219                     } else if (errorMsg != null) {
+220                         Text(text = errorMsg ?: "Невідома помилка", modifier = Modifier.align(Alignment.Center))
+221                     } else {
+222                         advertDetail?.let { advert ->
+223:                            AdvertDetailScreen(advert = advert)
+224                         } ?: Text(text = "Дані оголошення порожні", modifier = Modifier.align(Alignment.Center))
+225                    }
+226                }
+227                 CurrentScreen.CREATE_ADVERT -> {
+228                     if (authViewModel.token == null) {
+229                         LaunchedEffect(Unit) { authViewModel.navigateTo(CurrentScreen.LOGIN) }
+230                     } else {
+231                         CreateAdvertScreen(
+232                             viewModel = createAdvertViewModel,
+233                            token = authViewModel.token,
 234:                             onAdvertCreated = {
-235:                                 authViewModel.navigateTo(CurrentScreen.HOME)
-236:                             }
-237:                         )
-238:                     }
-239:                 }
-240:             }
-241:         }
-242:     }
-243: }
+235                                 authViewModel.navigateTo(CurrentScreen.HOME)
+236                             }
+237                         )
+238                     }
+239                 }
+240             }
+241         }
+242     }
+243 }
 
 В.2 AuthModels.Kt
-1: package com.example.myapplication.data.model.auth
-2: 
-3: import com.google.gson.annotations.SerializedName
-4: 
-5: data class LoginRequest(
-6:     @SerializedName("userEmail") val email: String,
-7:     @SerializedName("userPassword") val password: String
-8: )
-9: 
-10: data class LoginResponse(
-11:     @SerializedName("jwtToken") val jwtToken: String,
-12:     @SerializedName("refreshToken") val refreshToken: String
-13: )
-14: 
-15: data class RegisterRequest(
-16:     @SerializedName("userName") val firstName: String,
-17:     @SerializedName("userLastName") val lastName: String,
-18:     @SerializedName("userEmail") val email: String,
-19:     @SerializedName("userPassword") val password: String
-20: )
-21: 
-22: data class RegisterResponse(
-23:     @SerializedName("userName") val firstName: String,
-24:     @SerializedName("userLastName") val lastName: String,
-25:     @SerializedName("userEmail") val email: String
-26: )
+1 package com.example.myapplication.data.model.auth
+2 
+3 import com.google.gson.annotations.SerializedName
+4 
+5 data class LoginRequest(
+6     @SerializedName("userEmail") val email: String,
+7     @SerializedName("userPassword") val password: String
+8 )
+9 
+10 data class LoginResponse(
+11     @SerializedName("jwtToken") val jwtToken: String,
+12     @SerializedName("refreshToken") val refreshToken: String
+13 )
+14 
+15 data class RegisterRequest(
+16     @SerializedName("userName") val firstName: String,
+17     @SerializedName("userLastName") val lastName: String,
+18     @SerializedName("userEmail") val email: String,
+19     @SerializedName("userPassword") val password: String
+20 )
+21 
+22 data class RegisterResponse(
+23     @SerializedName("userName") val firstName: String,
+24     @SerializedName("userLastName") val lastName: String,
+25     @SerializedName("userEmail") val email: String
+26 )
+
+В.3 Перший запит до ШІ
+“Яким чином організувати навігацію між екранами у мобільнму застосунку на Jetpack Compose та реалізувати перенаправлення неавторизованого користувача на форму логіну при спробі створити оголшення?”
+
+В.4 Другий запит до ШІ
+“Як правильно налаштувати Retrofit клієнт для передачі складних Multipart даних, що містять одночасно текстові поля, файли зображень та колекції ідентифікаторів на віддалений REST API бекенд?”
+
+В.5 Третій запит до ШІ
+“Які UML діаграми доцільно використовувати для опису архітектури мобільного застосунку за шаблоном MVVM, його внутрішніх станів та алгоритму взаємодії з серверною частиною системи?”
 
 
-　　　　
-　　　　
-
-　　　　
 
 　　　　
 　　　　

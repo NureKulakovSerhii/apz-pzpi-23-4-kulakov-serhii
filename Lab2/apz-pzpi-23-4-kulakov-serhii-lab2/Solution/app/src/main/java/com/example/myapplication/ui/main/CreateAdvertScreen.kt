@@ -202,7 +202,7 @@ fun CreateAdvertScreen(
                 ) {
                     Checkbox(
                         checked = viewModel.selectedCommunications.contains(item),
-                        onCheckedChange = null // Click обробляється у Row
+                        onCheckedChange = null
                     )
                     Text(text = item.name, modifier = Modifier.padding(start = 8.dp))
                 }

@@ -16,7 +16,6 @@ class SearchViewModel : ViewModel() {
     var isLoading = mutableStateOf(false)
     var expanded by mutableStateOf(false)
     val cityOptions = listOf("Київ", "Одеса", "Львів", "Харків", "Дніпро", "Запоріжжя", "Вінниця", "Житомир", "Чернігів")
-    // Поля фільтрів
     var minPrice = mutableStateOf("")
     var maxPrice = mutableStateOf("")
     var minScale = mutableStateOf("")

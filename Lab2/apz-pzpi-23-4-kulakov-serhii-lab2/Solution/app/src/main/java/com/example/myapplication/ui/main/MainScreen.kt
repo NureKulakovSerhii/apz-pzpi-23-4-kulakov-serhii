@@ -31,7 +31,6 @@ import com.example.myapplication.ui.auth.LoginScreen
 import com.example.myapplication.ui.auth.RegisterScreen
 import com.example.myapplication.ui.components.AdvertCard
 import com.example.myapplication.ui.components.MainHeader
-// Імпортуємо твої нові компоненти для створення оголошення
 import com.example.myapplication.ui.advert.CreateAdvertScreen
 import com.example.myapplication.ui.advert.CreateAdvertViewModel
 
