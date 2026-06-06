@@ -1,0 +1,50 @@
+.current-time-widget {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--color-surface);
+    border-radius: 12px;
+    padding: 8px 16px;
+    box-shadow: 0 2px 8px var(--color-shadow);
+    text-align: center;
+    z-index: 1000;
+    font-family: monospace;
+    border: 1px solid var(--color-border);
+}
+
+.current-time-date {
+    font-size: 12px;
+    color: var(--color-text-muted);
+}
+
+.current-time-clock {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.current-time-timezone {
+    font-size: 10px;
+    color: var(--color-text-muted);
+}
+
+[data-theme="dark"] .current-time-widget {
+    background: #2d2d2d;
+    border-color: #444;
+}
+
+@media (max-width: 768px) {
+    .current-time-widget {
+        bottom: 10px;
+        right: 10px;
+        padding: 6px 12px;
+    }
+    
+    .current-time-clock {
+        font-size: 14px;
+    }
+    
+    .current-time-date {
+        font-size: 10px;
+    }
+}

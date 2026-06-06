@@ -1,0 +1,144 @@
+.footer {
+    background-color: #2d3748;
+    color: #fff;
+    padding: 40px 20px;
+    margin-top: auto;
+}
+
+.footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.footer-links-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+}
+
+.footer-column {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.footer-link {
+    color: #cbd5e0;
+    text-decoration: none;
+    font-size: 14px;
+    transition: color 0.2s ease;
+    line-height: 1.4;
+}
+
+.footer-link:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.footer-apps-section {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.footer-apps {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.app-store-btn {
+    display: block;
+    transition: transform 0.2s ease;
+}
+
+.app-store-btn:hover {
+    transform: translateY(-2px);
+}
+
+.app-store-img {
+    height: 40px;
+    width: auto;
+    border-radius: 6px;
+}
+
+@media (max-width: 1024px) {
+    .footer-links-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer {
+        padding: 30px 15px;
+    }
+    
+    .footer-content {
+        gap: 30px;
+    }
+    
+    .footer-links-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+    
+    .footer-apps {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .app-store-img {
+        height: 45px;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer-content {
+        gap: 25px;
+    }
+    
+    .footer-links-grid {
+        gap: 20px;
+    }
+    
+    .footer-column {
+        gap: 10px;
+    }
+    
+    .footer-link {
+        font-size: 13px;
+    }
+    
+    .app-store-img {
+        height: 40px;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+[data-theme="dark"] .footer {
+    background-color: #1a1a1a;
+}
+
+[data-theme="dark"] .footer-link {
+    color: #aaa;
+}
+
+[data-theme="dark"] .footer-link:hover {
+    color: #4F46E5;
+}

@@ -1,0 +1,82 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build outputs
+build
+coverage
+
+# Cache directories
+.cache
+.parcel-cache
+.eslintcache
+.prettiercache
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional: Keep the lock file in git (recommended)
+# package-lock.json
+# yarn.lock
+
+# Testing
+/coverage
+
+# Vite
+.vite
+
+# Temporary files
+*.tmp
+*.temp
+
+# OS generated files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE - WebStorm
+.idea/*
+*.iml
+
+# Debug files
+*.log
+*.log.*
+
+# Backup files
+*.bak
+*.backup
+
+# Source maps
+*.js.map
+*.css.map

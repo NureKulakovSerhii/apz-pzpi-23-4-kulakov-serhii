@@ -1,0 +1,458 @@
+.warehouse-page {
+    min-height: 100vh;
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
+.warehouse-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.warehouse-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.back-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #333;
+    padding: 8px 16px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+}
+
+.back-btn:hover {
+    background-color: #e8e8e8;
+}
+
+.like-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    color: #666;
+}
+
+.like-btn:hover {
+    transform: scale(1.1);
+}
+
+.like-btn.liked {
+    color: red;
+}
+
+.warehouse-content {
+    display: grid;
+    grid-template-columns: 1fr 400px; 
+    grid-template-rows: auto auto;
+    gap: 20px;
+    align-items: start;
+}
+
+.warehouse-image-section {
+    grid-column: 1;
+    grid-row: 1;
+    background-color: #e8e8e8;
+    border-radius: 12px;
+    padding: 20px;
+    height: 400px; 
+    
+}
+
+.warehouse-main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.warehouse-info-section {
+    grid-column: 2;
+    grid-row: 1;
+    background-color: #e8e8e8;
+    border-radius: 12px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    height: fit-content; 
+    min-height: 400px;
+}
+
+.warehouse-publish-date {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 10px;
+    text-align: left;
+}
+
+.warehouse-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+    margin: 0 0 12px 0;
+    text-align: left;
+    line-height: 1.3;
+}
+
+.warehouse-description {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #333;
+    margin-bottom: 16px;
+    flex: 1;
+    text-align: left;
+}
+
+.warehouse-description p {
+    margin: 0 0 6px 0;
+}
+
+.warehouse-price {
+    font-size: 26px;
+    font-weight: bold;
+    color: #000;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.show-phone-btn {
+    width: 100%;
+    background-color: #4ade80;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 14px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.show-phone-btn:hover {
+    background-color: #3bc970;
+}
+
+.warehouse-left-bottom {
+    grid-column: 1;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.warehouse-details-section {
+    background-color: #d4f4dd;
+    border-radius: 12px;
+    padding: 25px;
+}
+
+.details-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 0 15px 0;
+    color: #000;
+    text-align: left;
+}
+
+.details-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.detail-tag {
+    background-color: #fff;
+    border: 1px solid #999;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 14px;
+    color: #333;
+    text-align: left;
+}
+
+.warehouse-seller-section {
+    background-color: #e6d4f4;
+    border-radius: 12px;
+    padding: 25px;
+}
+
+.seller-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.seller-avatar {
+    width: 50px;
+    height: 50px;
+    background-color: #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    flex-shrink: 0;
+    color: #666;
+}
+
+.seller-info {
+    flex: 1;
+    text-align: left;
+}
+
+.seller-name {
+    font-size: 16px;
+    font-weight: bold;
+    margin: 0 0 4px 0;
+    color: #000;
+}
+
+.seller-member-since {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.seller-contact {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.seller-phone-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #4ade80;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000;
+}
+
+.seller-phone {
+    font-size: 16px;
+    font-weight: 600;
+    color: #000;
+}
+
+.show-phone-link {
+    color: #4ade80;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.show-phone-link:hover {
+    text-decoration: underline;
+}
+
+.warehouse-map-section {
+    grid-column: 2;
+    grid-row: 2;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+}
+
+.map-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.map-icon {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    color: #666;
+    margin-top: 2px;
+}
+
+.map-address {
+    flex: 1;
+    text-align: left;
+}
+
+.map-city {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+    color: #000;
+}
+
+.map-street {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+.map-link {
+    color: #4ade80;
+    text-decoration: none;
+    font-size: 14px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.map-link:hover {
+    text-decoration: underline;
+}
+
+.map-placeholder {
+    width: 100%;
+    height: 200px;
+    background-color: #e8e8e8;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+}
+
+@media (max-width: 1024px) {
+    .warehouse-content {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+    
+    .warehouse-image-section,
+    .warehouse-info-section,
+    .warehouse-left-bottom,
+    .warehouse-map-section {
+        grid-column: 1;
+        grid-row: auto;
+    }
+    
+    .warehouse-info-section {
+        height: auto;
+    }
+}
+[data-theme="dark"] .warehouse-page {
+    background-color: #1a1a1a;
+}
+
+[data-theme="dark"] .back-btn {
+    color: #ccc;
+}
+
+[data-theme="dark"] .back-btn:hover {
+    background-color: #3d3d3d;
+}
+
+[data-theme="dark"] .warehouse-image-section {
+    background-color: #2d2d2d;
+}
+
+[data-theme="dark"] .warehouse-info-section {
+    background-color: #2d2d2d;
+}
+
+[data-theme="dark"] .warehouse-publish-date {
+    color: #aaa;
+}
+
+[data-theme="dark"] .warehouse-title {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .warehouse-description {
+    color: #ccc;
+}
+
+[data-theme="dark"] .warehouse-price {
+    color: #4F46E5;
+}
+
+[data-theme="dark"] .show-phone-btn {
+    background-color: #4F46E5;
+    color: white;
+}
+
+[data-theme="dark"] .show-phone-btn:hover {
+    background-color: #4338CA;
+}
+
+[data-theme="dark"] .warehouse-details-section {
+    background-color: #1a2a1e;
+}
+
+[data-theme="dark"] .details-title {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .detail-tag {
+    background-color: #2d2d2d;
+    border-color: #555;
+    color: #ccc;
+}
+
+[data-theme="dark"] .warehouse-seller-section {
+    background-color: #2a1a2a;
+}
+
+[data-theme="dark"] .seller-name {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .seller-member-since {
+    color: #aaa;
+}
+
+[data-theme="dark"] .seller-avatar {
+    background-color: #3d3d3d;
+    color: #aaa;
+}
+
+[data-theme="dark"] .seller-phone-icon {
+    background-color: #4F46E5;
+    color: white;
+}
+
+[data-theme="dark"] .seller-phone {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .show-phone-link {
+    color: #4F46E5;
+}
+
+[data-theme="dark"] .warehouse-map-section {
+    background-color: #2d2d2d;
+}
+
+[data-theme="dark"] .map-city {
+    color: #e0e0e0;
+}
+
+[data-theme="dark"] .map-street {
+    color: #aaa;
+}
+
+[data-theme="dark"] .map-icon {
+    color: #aaa;
+}
+
+[data-theme="dark"] .map-link {
+    color: #4F46E5;
+}
+
+[data-theme="dark"] .map-placeholder {
+    background-color: #3d3d3d;
+    color: #aaa;
+}
